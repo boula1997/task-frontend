@@ -30,20 +30,63 @@ const EditTask: React.FC = () => {
     try {
       await updateTask({ ...task, ...updated });
       navigate("/tasks");
- 
     } catch (err: any) {
       // Re-throw so TaskForm can catch it
       throw err;
     }
   };
 
+  if (loading)
+    return (
+      <div className="text-center py-5">
+        <div className="spinner-border text-primary" role="status"></div>
+        <p className="mt-3">Loading task details...</p>
+      </div>
+    );
 
-  if (loading) return <p className="p-4">Loading...</p>;
+  if (!task)
+    return (
+      <div className="text-center py-5">
+        <h5 className="text-danger">Task not found</h5>
+        <button
+          className="btn btn-outline-secondary mt-3"
+          onClick={() => navigate("/tasks")}
+        >
+          ← Back to List
+        </button>
+      </div>
+    );
 
   return (
-    <div className="container py-4">
-      <h2 className="mb-4">Edit Task</h2>
-      {task && <TaskForm task={task} onSubmit={handleUpdate} />}
+    <div className="container py-5">
+      {/* Header Section */}
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2 className="fw-bold text-primary mb-0">
+          <i className="bi bi-pencil-square me-2"></i> Edit Task
+        </h2>
+        <button
+          className="btn btn-outline-secondary"
+          onClick={() => navigate("/tasks")}
+        >
+          <i className="bi bi-arrow-left me-1"></i> Back to List
+        </button>
+      </div>
+
+      {/* Card Wrapper */}
+      <div className="card border-0 shadow-lg rounded-4 p-4">
+        <p className="text-muted mb-4">
+          Update the fields below to edit the task. Changes will be saved immediately.
+        </p>
+
+        <TaskForm task={task} onSubmit={handleUpdate} />
+
+        <div className="text-center mt-4">
+          <small className="text-secondary">
+            <i className="bi bi-info-circle me-1"></i>
+            You can always update this task later.
+          </small>
+        </div>
+      </div>
     </div>
   );
 };
