@@ -10,3 +10,19 @@ export const login = async (email: string, password: string) => {
   const res = await api.post("/auth/login", { email, password });
   return res.data; // { token, user }
 };
+
+
+
+export const logout = async (token: string) => {
+  const res = await api.post(
+    "http://localhost:8000/api/auth/logout",
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return res.data;
+};
+

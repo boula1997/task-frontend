@@ -1,27 +1,54 @@
-import React from "react";
 import { Routes, Route } from "react-router-dom";
+import TaskList from "./pages/tasks/list";
+import CreateTask from "./pages/tasks/create";
+import EditTask from "./pages/tasks/edit";
+import ShowTask from "./pages/tasks/show";
 import Login from "./pages/Login";
+import PrivateRoute from "./components/PrivateRoute";
 import Signup from "./pages/Signup";
-import { AuthProvider } from "./context/AuthContext";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import TaskList from "./pages/tasks/List";
-import CreateTask from "./pages/tasks/Create";
-import EditTask from "./pages/tasks/Edit";
-import ShowTask from "./pages/tasks/Show";
 
-const App: React.FC = () => {
+function App() {
   return (
-    <AuthProvider>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/tasks" element={<TaskList />} />
-        <Route path="/tasks/create" element={<CreateTask />} />
-        <Route path="/tasks/:id/edit" element={<EditTask />} />
-        <Route path="/tasks/:id" element={<ShowTask />} />
-      </Routes>
-    </AuthProvider>
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+
+
+      {/* Protected routes */}
+      <Route
+        path="/tasks"
+        element={
+          <PrivateRoute>
+            <TaskList />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/tasks/create"
+        element={
+          <PrivateRoute>
+            <CreateTask />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/tasks/:id/edit"
+        element={
+          <PrivateRoute>
+            <EditTask />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/tasks/:id"
+        element={
+          <PrivateRoute>
+            <ShowTask />
+          </PrivateRoute>
+        }
+      />
+    </Routes>
   );
-};
+}
 
 export default App;

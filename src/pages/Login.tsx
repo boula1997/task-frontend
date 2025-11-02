@@ -22,7 +22,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     setToken(data.access_token);
     setUser(data.user);
 
-    navigate("/dashboard");
+    navigate("/tasks");
   } catch (err: any) {
     setError(err.response?.data?.message || "Login failed");
   }

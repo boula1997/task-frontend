@@ -2,10 +2,11 @@ import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { getTasks, deleteTask, updateTask } from "../../api/tasks";
+import { logout } from "../../api/auth"; // import your logout API
 import type { Task } from "../../api/tasks";
 
 const TaskList: React.FC = () => {
-  const { user } = useContext(AuthContext);
+  const { user, token, setUser, setToken } = useContext(AuthContext);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
@@ -48,16 +49,43 @@ const TaskList: React.FC = () => {
     }
   };
 
+  // ✅ Logout handler
+  const handleLogout = async () => {
+    if (!window.confirm("Are you sure you want to log out?")) return;
+    try {
+      if (token) {
+        await logout(token); // call backend API
+      }
+    } catch (err) {
+      console.error("Logout failed:", err);
+    } finally {
+      // Clear auth state and navigate to login
+      setUser(null);
+      setToken(null);
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      navigate("/login");
+    }
+  };
+
   return (
     <div className="container py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>My Tasks</h2>
-        <button
-          className="btn btn-primary"
-          onClick={() => navigate("/tasks/create")}
-        >
-          + New Task
-        </button>
+        <div>
+          <button
+            className="btn btn-secondary me-2"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate("/tasks/create")}
+          >
+            + New Task
+          </button>
+        </div>
       </div>
 
       {error && <div className="alert alert-danger">{error}</div>}
