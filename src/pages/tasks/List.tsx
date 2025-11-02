@@ -73,17 +73,19 @@ const TaskList: React.FC = () => {
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>My Tasks</h2>
         <div>
-          <button
-            className="btn btn-secondary me-2"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
+
           <button
             className="btn btn-primary"
             onClick={() => navigate("/tasks/create")}
           >
             + New Task
+          </button>
+
+        <button
+            className="btn btn-secondary ms-2"
+            onClick={handleLogout}
+          >
+            Logout
           </button>
         </div>
       </div>
