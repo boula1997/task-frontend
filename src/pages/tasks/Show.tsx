@@ -23,24 +23,92 @@ const ShowTask: React.FC = () => {
     fetchTask();
   }, [id]);
 
-  if (loading) return <p>Loading...</p>;
-  if (!task) return <p>Task not found</p>;
+  if (loading)
+    return (
+      <div className="text-center py-5">
+        <div className="spinner-border text-primary" role="status"></div>
+        <p className="mt-3">Loading task details...</p>
+      </div>
+    );
+
+  if (!task)
+    return (
+      <div className="text-center py-5">
+        <h5 className="text-danger">Task not found</h5>
+        <button className="btn btn-outline-secondary mt-3" onClick={() => navigate("/tasks")}>
+          ← Back to list
+        </button>
+      </div>
+    );
 
   return (
-    <div className="container py-4">
-      <button className="btn btn-secondary mb-3" onClick={() => navigate("/tasks")}>
-        ← Back to list
-      </button>
+    <div className="container py-5">
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2 className="fw-bold text-primary mb-0">
+          <i className="bi bi-clipboard2-check me-2"></i> Task Details
+        </h2>
+        <button className="btn btn-outline-secondary" onClick={() => navigate("/tasks")}>
+          <i className="bi bi-arrow-left me-1"></i> Back to List
+        </button>
+      </div>
 
-      <div className="card p-4 shadow-sm">
-        <h3>{task.title}</h3>
-        <p>{task.description}</p>
-        <p><strong>Due Date:</strong> {task.due_date}</p>
-        <p><strong>Priority:</strong> {task.priority}</p>
-        <p>
-          <strong>Status:</strong>{" "}
-          {task.is_completed ? "Completed" : "Incomplete"}
-        </p>
+      <div className="card border-0 shadow-lg rounded-4 p-4">
+        <div className="mb-4">
+          <h3 className="fw-bold text-dark mb-1">{task.title}</h3>
+          <p className="text-muted mb-0">{task.description || "No description provided."}</p>
+        </div>
+
+        <div className="row gy-3">
+          <div className="col-md-4">
+            <div className="bg-light p-3 rounded">
+              <strong>📅 Due Date:</strong>
+              <div>{new Date(task.due_date).toLocaleDateString()}</div>
+            </div>
+          </div>
+
+          <div className="col-md-4">
+            <div className="bg-light p-3 rounded">
+              <strong>⚡ Priority:</strong>
+              <div>
+                <span
+                  className={`badge ${
+                    task.priority === "high"
+                      ? "bg-danger"
+                      : task.priority === "medium"
+                      ? "bg-warning text-dark"
+                      : "bg-success"
+                  }`}
+                >
+                  {task.priority}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-md-4">
+            <div className="bg-light p-3 rounded">
+              <strong>✅ Status:</strong>
+              <div>
+                <span
+                  className={`badge ${
+                    task.is_completed ? "bg-success" : "bg-secondary"
+                  }`}
+                >
+                  {task.is_completed ? "Completed" : "Incomplete"}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-4 text-end">
+          <button
+            className="btn btn-primary px-4"
+            onClick={() => navigate(`/tasks/edit/${task.id}`)}
+          >
+            <i className="bi bi-pencil-square me-1"></i> Edit Task
+          </button>
+        </div>
       </div>
     </div>
   );
