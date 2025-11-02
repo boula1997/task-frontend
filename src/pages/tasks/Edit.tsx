@@ -31,7 +31,7 @@ const EditTask: React.FC = () => {
       navigate("/tasks");
     } catch (err) {
       console.error("Failed to update task:", err);
-      alert("Error updating task");
+      alert(err.message);
     }
   };
 

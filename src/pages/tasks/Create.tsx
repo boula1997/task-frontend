@@ -9,18 +9,14 @@ const CreateTask: React.FC = () => {
   const { user } = React.useContext(AuthContext);
 
   const handleCreate = async (task: any) => {
-    try {
-      await createTask({
-        ...task,
-        creator_id: user!.id,
-        assignee_id: user!.id,
-        is_completed: false,
-      });
-      navigate("/tasks");
-    } catch (err) {
-      console.error("Failed to create task:", err);
-      alert("Error creating task");
-    }
+    // Let TaskForm handle errors
+    await createTask({
+      ...task,
+      creator_id: user!.id,
+      assignee_id: user!.id,
+      is_completed: false,
+    });
+    navigate("/tasks");
   };
 
   return (
