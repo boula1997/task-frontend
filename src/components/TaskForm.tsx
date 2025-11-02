@@ -39,7 +39,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSubmit, onCancel }) => {
 
     // Frontend validation for assignee_email only on create
     if (!task && !assigneeEmail) {
-      setErrors({ assignee_email: ["Assignee email is required for new tasks"] });
+      setErrors({ assignee_email: ["Assignee email is  for new tasks"] });
       return;
     }
 
@@ -51,21 +51,17 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSubmit, onCancel }) => {
         priority,
         assignee_email: assigneeEmail || undefined,
       });
-
-      if (!task) {
-        setTitle("");
-        setDescription("");
-        setDueDate("");
-        setPriority("medium");
-        setAssigneeEmail("");
-      }
     } catch (err: any) {
-      if (err.response?.data?.errors) {
-        setErrors(err.response.data.errors);
+      const errorData = err.response?.data;
+      if (errorData?.errors) {
+        setErrors(errorData.errors); // shows field-specific errors
+      } else if (errorData?.message) {
+        alert(errorData.message); // fallback general error
       } else {
-        alert(err.message || "Something went wrong");
+        alert("Something went wrong");
       }
     }
+
   };
 
 
@@ -88,7 +84,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSubmit, onCancel }) => {
           className={`form-control ${errors.title ? "is-invalid" : ""}`}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          required
+
         />
         {renderError("title")}
       </div>
@@ -116,7 +112,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSubmit, onCancel }) => {
           className={`form-control ${errors.due_date ? "is-invalid" : ""}`}
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
-          required
+
         />
         {renderError("due_date")}
       </div>

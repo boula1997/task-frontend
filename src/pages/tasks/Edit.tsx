@@ -26,14 +26,17 @@ const EditTask: React.FC = () => {
 
   const handleUpdate = async (updated: Partial<Task>) => {
     if (!task) return;
+
     try {
       await updateTask({ ...task, ...updated });
       navigate("/tasks");
-    } catch (err) {
-      console.error("Failed to update task:", err);
-      alert(err.message);
+ 
+    } catch (err: any) {
+      // Re-throw so TaskForm can catch it
+      throw err;
     }
   };
+
 
   if (loading) return <p className="p-4">Loading...</p>;
 
