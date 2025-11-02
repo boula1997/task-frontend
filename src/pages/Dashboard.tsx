@@ -1,7 +1,8 @@
 // src/pages/Dashboard.tsx
 import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import type { Task, getTasks, deleteTask, updateTask, createTask } from "../api/tasks";
+import type { Task } from "../api/tasks"; // type-only
+import { getTasks, deleteTask, updateTask, createTask } from "../api/tasks"; // runtime
 import TaskCard from "../components/TaskCard";
 import TaskForm from "./TaskForm";
 
@@ -12,12 +13,10 @@ const Dashboard: React.FC = () => {
   const [error, setError] = useState<string>("");
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
-  // Fetch tasks assigned to the logged-in user
   const fetchTasks = async () => {
     try {
       setLoading(true);
       const data: Task[] = await getTasks();
-      // Filter tasks assigned to the current user
       const myTasks = data.filter((task) => task.assignee_id === user?.id);
       setTasks(myTasks);
     } catch (err) {
@@ -36,7 +35,7 @@ const Dashboard: React.FC = () => {
     try {
       await deleteTask(task.id);
       setTasks(tasks.filter((t) => t.id !== task.id));
-    } catch (err) {
+    } catch {
       setError("Failed to delete task");
     }
   };
@@ -45,7 +44,7 @@ const Dashboard: React.FC = () => {
     try {
       await updateTask({ ...task, is_completed: !task.is_completed });
       fetchTasks();
-    } catch (err) {
+    } catch {
       setError("Failed to update task");
     }
   };
@@ -57,28 +56,35 @@ const Dashboard: React.FC = () => {
   const handleFormSubmit = async (task: Partial<Task>) => {
     try {
       if (editingTask) {
-        // Update existing task
         await updateTask({ ...editingTask, ...task });
         setEditingTask(null);
       } else {
-        // Create new task
-        await createTask({ ...task, creator_id: user!.id, assignee_id: user!.id, is_completed: false });
+        await createTask({
+          ...task,
+          creator_id: user!.id,
+          assignee_id: user!.id,
+          is_completed: false,
+        });
       }
       fetchTasks();
-    } catch (err) {
+    } catch {
       setError("Failed to save task");
     }
   };
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">Welcome, {user?.email}</h1>
+    <div className="container py-4">
+      <h1 className="mb-4">Welcome, {user?.email}</h1>
 
-      {error && <p className="text-red-500 mb-2">{error}</p>}
+      {error && <div className="alert alert-danger">{error}</div>}
 
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">{editingTask ? "Edit Task" : "Create New Task"}</h2>
-        <TaskForm task={editingTask} onSubmit={handleFormSubmit} onCancel={() => setEditingTask(null)} />
+      <div className="mb-4">
+        <h2>{editingTask ? "Edit Task" : "Create New Task"}</h2>
+        <TaskForm
+          task={editingTask}
+          onSubmit={handleFormSubmit}
+          onCancel={() => setEditingTask(null)}
+        />
       </div>
 
       {loading ? (
@@ -86,15 +92,16 @@ const Dashboard: React.FC = () => {
       ) : tasks.length === 0 ? (
         <p>No tasks assigned to you.</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="row">
           {tasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              onDelete={handleDelete}
-              onToggleComplete={handleToggleComplete}
-              onEdit={handleEdit} // pass edit handler
-            />
+            <div key={task.id} className="col-md-6 mb-3">
+              <TaskCard
+                task={task}
+                onDelete={handleDelete}
+                onToggleComplete={handleToggleComplete}
+                onEdit={handleEdit} // pass edit handler
+              />
+            </div>
           ))}
         </div>
       )}
