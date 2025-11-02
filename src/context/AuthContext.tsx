@@ -1,19 +1,33 @@
-// src/context/AuthContext.tsx
 import React, { createContext, useState, useEffect, ReactNode } from "react";
 
+interface User {
+  id: number;
+  email: string;
+  email_verified_at?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 interface AuthContextType {
-  user: { email: string } | null;
-  setUser: (user: { email: string } | null) => void;
+  user: User | null;
+  token: string | null;
+  setUser: (user: User | null) => void;
+  setToken: (token: string | null) => void;
 }
 
 export const AuthContext = createContext<AuthContextType>({
   user: null,
+  token: null,
   setUser: () => {},
+  setToken: () => {},
 });
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<{ email: string } | null>(
+  const [user, setUser] = useState<User | null>(
     JSON.parse(localStorage.getItem("user") || "null")
+  );
+  const [token, setToken] = useState<string | null>(
+    localStorage.getItem("token") || null
   );
 
   useEffect(() => {
@@ -21,5 +35,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     else localStorage.removeItem("user");
   }, [user]);
 
-  return <AuthContext.Provider value={{ user, setUser }}>{children}</AuthContext.Provider>;
+  useEffect(() => {
+    if (token) localStorage.setItem("token", token);
+    else localStorage.removeItem("token");
+  }, [token]);
+
+  return (
+    <AuthContext.Provider value={{ user, token, setUser, setToken }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };

@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost/task-manager-backend/api", // adjust to your PHP backend
+  baseURL: "http://127.0.0.1:8000/api", // adjust to your PHP backend
 });
 
 api.interceptors.request.use((config) => {

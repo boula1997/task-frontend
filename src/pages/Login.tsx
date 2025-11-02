@@ -7,21 +7,27 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { setUser } = useContext(AuthContext);
+  const { setUser, setToken } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    try {
-      const data = await login(email, password);
-      localStorage.setItem("token", data.access_token);
-      setUser(data.user);
-      navigate("/dashboard");
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Login failed");
-    }
-  };
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError("");
+
+  try {
+    const data = await login(email, password);
+
+    // Store token and user in context + localStorage
+    setToken(data.access_token);
+    setUser(data.user);
+
+    navigate("/dashboard");
+  } catch (err: any) {
+    setError(err.response?.data?.message || "Login failed");
+  }
+};
+
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100">

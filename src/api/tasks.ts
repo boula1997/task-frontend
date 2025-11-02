@@ -17,21 +17,46 @@ export const api = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-export const getTasks = async (): Promise<Task[]> => {
-  const res = await api.get("/tasks");
+export const getTasks = async (token: string) => {
+  const res = await axios.get(`http://localhost:8000/api/tasks`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return res.data;
 };
+
 
 export const createTask = async (task: Partial<Task>): Promise<Task> => {
-  const res = await api.post("/tasks", task);
+  const token = localStorage.getItem("token"); 
+
+  const res = await api.post("http://localhost:8000/api/tasks", task, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
   return res.data;
 };
 
+
 export const updateTask = async (task: Task): Promise<Task> => {
-  const res = await api.put(`/tasks/${task.id}`, task);
+  const token = localStorage.getItem("token"); 
+
+  const res = await api.post(`/tasks/${task.id}`, task, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return res.data;
 };
 
 export const deleteTask = async (taskId: number): Promise<void> => {
-  await api.delete(`/tasks/${taskId}`);
+  const token = localStorage.getItem("token"); 
+
+  await api.delete(`/tasks/${taskId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
