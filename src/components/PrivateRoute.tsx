@@ -9,6 +9,7 @@ interface PrivateRouteProps {
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   const { user } = useContext(AuthContext);
 
+
   if (!user) {
     // Redirect to login if not authenticated
     return <Navigate to="/login" replace />;

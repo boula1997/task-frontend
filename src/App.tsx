@@ -6,6 +6,8 @@ import ShowTask from "./pages/tasks/show";
 import Login from "./pages/Login";
 import PrivateRoute from "./components/PrivateRoute";
 import Signup from "./pages/Signup";
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 function App() {
   return (

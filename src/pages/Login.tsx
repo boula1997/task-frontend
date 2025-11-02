@@ -18,15 +18,20 @@ const handleSubmit = async (e: React.FormEvent) => {
   try {
     const data = await login(email, password);
 
-    // Store token and user in context + localStorage
-    setToken(data.access_token);
-    setUser(data.user);
-
-    navigate("/tasks");
+    if (data.access_token && data.user) {
+      // Store in context
+      setToken(data.access_token);
+      setUser(data.user);
+      
+      navigate("/tasks");
+    } else {
+      setError("Invalid login response from server");
+    }
   } catch (err: any) {
     setError(err.response?.data?.message || "Login failed");
   }
 };
+
 
 
   return (
