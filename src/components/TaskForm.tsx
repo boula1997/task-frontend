@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import type { Task } from "../api/tasks"; // type-only import
+import type { Task } from "../api/tasks";
 
 interface TaskFormProps {
   task?: Task | null;
@@ -29,6 +29,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSubmit, onCancel }) => {
       alert("Title and Due Date are required");
       return;
     }
+
     onSubmit({
       title,
       description,
@@ -37,6 +38,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSubmit, onCancel }) => {
       assignee_email: assigneeEmail || undefined,
     });
 
+    // reset if creating new
     if (!task) {
       setTitle("");
       setDescription("");
@@ -47,16 +49,14 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSubmit, onCancel }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="card p-4 mb-4 shadow-sm">
-      <h5 className="card-title mb-3">{task ? "Edit Task" : "Create New Task"}</h5>
-
+    <form onSubmit={handleSubmit} className="card p-4 shadow-sm">
       <div className="mb-3">
         <label className="form-label">Title *</label>
         <input
           type="text"
+          className="form-control"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="form-control"
           required
         />
       </div>
@@ -64,9 +64,9 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSubmit, onCancel }) => {
       <div className="mb-3">
         <label className="form-label">Description</label>
         <textarea
+          className="form-control"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="form-control"
         />
       </div>
 
@@ -74,9 +74,9 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSubmit, onCancel }) => {
         <label className="form-label">Due Date *</label>
         <input
           type="date"
+          className="form-control"
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
-          className="form-control"
           required
         />
       </div>
@@ -84,9 +84,9 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSubmit, onCancel }) => {
       <div className="mb-3">
         <label className="form-label">Priority</label>
         <select
+          className="form-select"
           value={priority}
           onChange={(e) => setPriority(e.target.value)}
-          className="form-select"
         >
           <option value="low">Low</option>
           <option value="medium">Medium</option>
@@ -98,9 +98,10 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSubmit, onCancel }) => {
         <label className="form-label">Assign to (email)</label>
         <input
           type="email"
+          className="form-control"
           value={assigneeEmail}
           onChange={(e) => setAssigneeEmail(e.target.value)}
-          className="form-control"
+          placeholder="optional"
         />
       </div>
 
