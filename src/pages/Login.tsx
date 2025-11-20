@@ -10,71 +10,105 @@ const Login: React.FC = () => {
   const { setUser, setToken } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError("");
+    try {
+      const data = await login(email, password);
 
-  try {
-    const data = await login(email, password);
-
-    if (data.access_token && data.user) {
-      // Store in context
-      setToken(data.access_token);
-      setUser(data.user);
-      
-      navigate("/tasks");
-    } else {
-      setError("Invalid login response from server");
+      if (data.access_token && data.user) {
+        setToken(data.access_token);
+        setUser(data.user);
+        navigate("/tasks");
+      } else {
+        setError("Invalid login response from server");
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Login failed");
     }
-  } catch (err: any) {
-    setError(err.response?.data?.message || "Login failed");
-  }
-};
-
-
+  };
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100">
-      <div className="card p-4 shadow-sm" style={{ width: "100%", maxWidth: "400px" }}>
-        <h3 className="card-title mb-4 text-center">Login</h3>
+    <div
+      className="d-flex justify-content-center align-items-center vh-100"
+      style={{
+        background: "linear-gradient(135deg, #4158D0, #C850C0, #FFCC70)",
+        padding: "20px",
+      }}
+    >
+      <div
+        className="card border-0 shadow-lg p-4"
+        style={{
+          width: "100%",
+          maxWidth: "420px",
+          borderRadius: "20px",
+          backdropFilter: "blur(10px)",
+        }}
+      >
+        <h3 className="text-center mb-4 fw-bold" style={{ color: "#4158D0" }}>
+          Welcome Back
+        </h3>
 
-        {error && <div className="alert alert-danger">{error}</div>}
+        {error && (
+          <div className="alert alert-danger text-center py-2">{error}</div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label htmlFor="email" className="form-label">Email</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="form-control"
-              required
-            />
+            <label className="form-label fw-semibold">Email</label>
+            <div className="input-group">
+              <span className="input-group-text bg-light">
+                <i className="bi bi-envelope-fill text-primary"></i>
+              </span>
+              <input
+                type="email"
+                className="form-control"
+                placeholder="example@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
           </div>
 
           <div className="mb-3">
-            <label htmlFor="password" className="form-label">Password</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="form-control"
-              required
-            />
+            <label className="form-label fw-semibold">Password</label>
+            <div className="input-group">
+              <span className="input-group-text bg-light">
+                <i className="bi bi-lock-fill text-primary"></i>
+              </span>
+              <input
+                type="password"
+                className="form-control"
+                placeholder="Minimum 6 characters"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
           </div>
 
-          <button type="submit" className="btn btn-success w-100">
+          <button
+            type="submit"
+            className="btn w-100 text-white fw-semibold"
+            style={{
+              background: "linear-gradient(90deg, #4158D0, #C850C0)",
+              borderRadius: "10px",
+              padding: "10px",
+            }}
+          >
             Login
           </button>
         </form>
 
-        {/* Add signup link */}
-        <div className="mt-3 text-center">
-          <span>Don't have an account? </span>
-          <Link to="/signup">Sign up</Link>
+        <div className="mt-4 text-center">
+          <p className="mb-0">
+            Don't have an account?{" "}
+            <Link to="/signup" className="fw-semibold text-primary">
+              Sign up
+            </Link>
+          </p>
         </div>
       </div>
     </div>
