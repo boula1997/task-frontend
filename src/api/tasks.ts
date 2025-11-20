@@ -33,11 +33,13 @@ const getAuthHeader = () => {
 };
 
 // ✅ Fetch all tasks
-export const getTasks = async (filters = {}) => {
-  const query = new URLSearchParams(filters).toString();
-  const response = await api.get(`/tasks?${query}`,getAuthHeader());
-  return response.data.data;
+export const getTasks = async (filters: any = {}, page = 1) => {
+  const query = new URLSearchParams({ ...filters, page }).toString();
+  const res = await api.get(`/tasks?${query}`, getAuthHeader());
+  return res.data.data; // Return the full response, not just res.data.data
 };
+
+
 
 
 

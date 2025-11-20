@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useContext } from "react";
+import React, { useEffect, useReducer, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { getTasks, deleteTask, updateTask } from "../../api/tasks";
@@ -11,28 +11,33 @@ const TaskList: React.FC = () => {
   const { user, token, setUser, setToken } = useContext(AuthContext);
   const [state, dispatch] = useReducer(tasksReducer, initialState);
   const navigate = useNavigate();
+  const [page, setPage] = useState(1);
 
-  const fetchTasks = async () => {
+  // Main function to fetch tasks with current filters and page
+  const fetchTasksWithFilters = async (pageNumber = 1) => {
     if (!user) return;
     dispatch({ type: "FETCH_START" });
     try {
-      const data = await getTasks();
-      dispatch({ type: "FETCH_SUCCESS", payload: data });
+      const response = await getTasks(state.filters, pageNumber);
+      dispatch({ type: "FETCH_SUCCESS", payload: response });
+      setPage(pageNumber);
     } catch (err) {
       console.error(err);
       dispatch({ type: "FETCH_ERROR", payload: "Failed to load tasks." });
     }
   };
 
+  // Initial load and when filters change
   useEffect(() => {
-    fetchTasks();
-  }, []);
+    fetchTasksWithFilters(1);
+  }, []); // Remove state.filters from dependencies to avoid infinite loops
 
   const handleDelete = async (task: Task) => {
     if (!window.confirm("Are you sure you want to delete this task?")) return;
     try {
       await deleteTask(task.id);
-      dispatch({ type: "DELETE_TASK", payload: task.id });
+      // Refresh the current page after deletion
+      fetchTasksWithFilters(page);
     } catch {
       dispatch({ type: "FETCH_ERROR", payload: "Failed to delete task." });
     }
@@ -42,7 +47,8 @@ const TaskList: React.FC = () => {
     try {
       const updatedTask = { ...task, is_completed: !task.is_completed };
       await updateTask(updatedTask);
-      dispatch({ type: "UPDATE_TASK", payload: updatedTask });
+      // Refresh the current page after update
+      fetchTasksWithFilters(page);
     } catch {
       dispatch({ type: "FETCH_ERROR", payload: "Failed to update task status." });
     }
@@ -63,27 +69,27 @@ const TaskList: React.FC = () => {
     }
   };
 
-  const fetchTasksWithFilters = async () => {
-    if (!user) return;
-    dispatch({ type: "FETCH_START" });
-
-    try {
-      const filters = state.filters; // { title, description, priority, status, dueFrom, dueTo }
-      const data = await getTasks(filters); // send filters to backend
-      dispatch({ type: "FETCH_SUCCESS", payload: data });
-    } catch (err) {
-      console.error(err);
-      dispatch({ type: "FETCH_ERROR", payload: "Failed to load tasks." });
-    }
+  // Apply filters and reset to page 1
+  const applyFilters = () => {
+    fetchTasksWithFilters(1);
   };
 
+  // Reset filters and refresh data
   const resetFilters = () => {
     dispatch({ type: "RESET_FILTERS" });
-    fetchTasksWithFilters(); // reload without filters
+    // Wait for state update then refresh data
+    setTimeout(() => fetchTasksWithFilters(1), 0);
   };
 
-
-  const { tasks, loading, error } = state;
+  const { loading, error } = state;
+  
+  // Use the tasks from the API response, fallback to empty array
+  const tasks = state.tasks?.data || [];
+  const pagination = state.tasks || {
+    current_page: 1,
+    last_page: 1,
+    total: 0
+  };
 
   return (
     <div className="container py-5">
@@ -115,109 +121,108 @@ const TaskList: React.FC = () => {
           </div>
         </div>
 
-<div className="card-body bg-light rounded-4 mb-3 p-3 shadow-sm">
-  <h5 className="mb-3 fw-semibold text-primary">
-    <i className="bi bi-funnel me-2"></i>Filter Tasks
-  </h5>
-  <div className="row g-3 align-items-end">
-    <div className="col-md-2">
-      <label className="form-label fw-semibold">Title</label>
-      <input
-        type="text"
-        className="form-control"
-        placeholder="Title"
-        value={state.filters.title}
-        onChange={(e) =>
-          dispatch({ type: "SET_FILTER", payload: { field: "title", value: e.target.value } })
-        }
-      />
-    </div>
+        <div className="card-body bg-light rounded-4 mb-3 p-3 shadow-sm">
+          <h5 className="mb-3 fw-semibold text-primary">
+            <i className="bi bi-funnel me-2"></i>Filter Tasks
+          </h5>
+          <div className="row g-3 align-items-end">
+            <div className="col-md-2">
+              <label className="form-label fw-semibold">Title</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Title"
+                value={state.filters.title}
+                onChange={(e) =>
+                  dispatch({ type: "SET_FILTER", payload: { field: "title", value: e.target.value } })
+                }
+              />
+            </div>
 
-    <div className="col-md-2">
-      <label className="form-label fw-semibold">Description</label>
-      <input
-        type="text"
-        className="form-control"
-        placeholder="Description"
-        value={state.filters.description}
-        onChange={(e) =>
-          dispatch({ type: "SET_FILTER", payload: { field: "description", value: e.target.value } })
-        }
-      />
-    </div>
+            <div className="col-md-2">
+              <label className="form-label fw-semibold">Description</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Description"
+                value={state.filters.description}
+                onChange={(e) =>
+                  dispatch({ type: "SET_FILTER", payload: { field: "description", value: e.target.value } })
+                }
+              />
+            </div>
 
-    <div className="col-md-2">
-      <label className="form-label fw-semibold">Priority</label>
-      <select
-        className="form-select"
-        value={state.filters.priority}
-        onChange={(e) =>
-          dispatch({ type: "SET_FILTER", payload: { field: "priority", value: e.target.value } })
-        }
-      >
-        <option value="">All priorities</option>
-        <option value="high">High</option>
-        <option value="medium">Medium</option>
-        <option value="low">Low</option>
-      </select>
-    </div>
+            <div className="col-md-2">
+              <label className="form-label fw-semibold">Priority</label>
+              <select
+                className="form-select"
+                value={state.filters.priority}
+                onChange={(e) =>
+                  dispatch({ type: "SET_FILTER", payload: { field: "priority", value: e.target.value } })
+                }
+              >
+                <option value="">All priorities</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+              </select>
+            </div>
 
-    <div className="col-md-2">
-      <label className="form-label fw-semibold">Status</label>
-      <select
-        className="form-select"
-        value={state.filters.status}
-        onChange={(e) =>
-          dispatch({ type: "SET_FILTER", payload: { field: "status", value: e.target.value } })
-        }
-      >
-        <option value="">All status</option>
-        <option value="completed">Completed</option>
-        <option value="incomplete">Incomplete</option>
-      </select>
-    </div>
+            <div className="col-md-2">
+              <label className="form-label fw-semibold">Status</label>
+              <select
+                className="form-select"
+                value={state.filters.status}
+                onChange={(e) =>
+                  dispatch({ type: "SET_FILTER", payload: { field: "status", value: e.target.value } })
+                }
+              >
+                <option value="">All status</option>
+                <option value="completed">Completed</option>
+                <option value="incomplete">Incomplete</option>
+              </select>
+            </div>
 
-    <div className="col-md-2">
-      <label className="form-label fw-semibold">Due From</label>
-      <input
-        type="date"
-        className="form-control"
-        value={state.filters.dueFrom}
-        onChange={(e) =>
-          dispatch({ type: "SET_FILTER", payload: { field: "dueFrom", value: e.target.value } })
-        }
-      />
-    </div>
+            <div className="col-md-2">
+              <label className="form-label fw-semibold">Due From</label>
+              <input
+                type="date"
+                className="form-control"
+                value={state.filters.dueFrom}
+                onChange={(e) =>
+                  dispatch({ type: "SET_FILTER", payload: { field: "dueFrom", value: e.target.value } })
+                }
+              />
+            </div>
 
-    <div className="col-md-2">
-      <label className="form-label fw-semibold">Due To</label>
-      <input
-        type="date"
-        className="form-control"
-        value={state.filters.dueTo}
-        onChange={(e) =>
-          dispatch({ type: "SET_FILTER", payload: { field: "dueTo", value: e.target.value } })
-        }
-      />
-    </div>
+            <div className="col-md-2">
+              <label className="form-label fw-semibold">Due To</label>
+              <input
+                type="date"
+                className="form-control"
+                value={state.filters.dueTo}
+                onChange={(e) =>
+                  dispatch({ type: "SET_FILTER", payload: { field: "dueTo", value: e.target.value } })
+                }
+              />
+            </div>
 
-    <div className="col-md-12 d-flex justify-content-end mt-2">
-      <button
-        className="btn btn-primary me-2"
-        onClick={() => dispatch({ type: "APPLY_FILTERS" })}
-      >
-        <i className="bi bi-funnel me-1"></i> Filter
-      </button>
-      <button
-        className="btn btn-secondary"
-        onClick={() => dispatch({ type: "RESET_FILTERS" })}
-      >
-        <i className="bi bi-x-circle me-1"></i> Reset
-      </button>
-    </div>
-  </div>
-</div>
-
+            <div className="col-md-12 d-flex justify-content-center mt-2">
+              <button
+                className="btn btn-primary me-2"
+                onClick={applyFilters}
+              >
+                <i className="bi bi-funnel me-1"></i> Filter
+              </button>
+              <button
+                className="btn btn-secondary"
+                onClick={resetFilters}
+              >
+                <i className="bi bi-x-circle me-1"></i> Reset
+              </button>
+            </div>
+          </div>
+        </div>
 
         <div className="card-body bg-light rounded-bottom-4 p-4">
           {error && <div className="alert alert-danger">{error}</div>}
@@ -227,7 +232,7 @@ const TaskList: React.FC = () => {
               <div className="spinner-border text-primary" role="status"></div>
               <p className="mt-3 text-muted">Loading tasks...</p>
             </div>
-          ) : state.filteredTasks.length === 0 ? (
+          ) : tasks.length === 0 ? (
             <p className="text-center text-muted">No tasks found.</p>
           ) : (
             <div className="table-responsive">
@@ -243,7 +248,7 @@ const TaskList: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {state.filteredTasks.map((task) => {
+                  {tasks.map((task) => {
                     const status = task.is_completed
                       ? "Done"
                       : new Date(task.due_date).toDateString() ===
@@ -312,6 +317,27 @@ const TaskList: React.FC = () => {
                   })}
                 </tbody>
               </table>
+
+              {/* Pagination Controls */}
+              <div className="d-flex justify-content-center mt-3">
+                <button
+                  className="btn btn-outline-primary me-2"
+                  disabled={pagination.current_page === 1}
+                  onClick={() => fetchTasksWithFilters(pagination.current_page - 1)}
+                >
+                  Previous
+                </button>
+                <span className="align-self-center mx-3">
+                  Page {pagination.current_page} of {pagination.last_page}
+                </span>
+                <button
+                  className="btn btn-outline-primary ms-2"
+                  disabled={pagination.current_page === pagination.last_page}
+                  onClick={() => fetchTasksWithFilters(pagination.current_page + 1)}
+                >
+                  Next
+                </button>
+              </div>
             </div>
           )}
         </div>
