@@ -33,10 +33,13 @@ const getAuthHeader = () => {
 };
 
 // ✅ Fetch all tasks
-export const getTasks = async (): Promise<Task[]> => {
-  const res = await api.get("/tasks", getAuthHeader());
-  return res.data.data;
+export const getTasks = async (filters = {}) => {
+  const query = new URLSearchParams(filters).toString();
+  const response = await api.get(`/tasks?${query}`,getAuthHeader());
+  return response.data.data;
 };
+
+
 
 // ✅ Fetch one task by ID
 export const getTaskById = async (id: number): Promise<Task> => {
