@@ -11,33 +11,41 @@ const TaskList: React.FC = () => {
   const { user, token, setUser, setToken } = useContext(AuthContext);
   const [state, dispatch] = useReducer(tasksReducer, initialState);
   const navigate = useNavigate();
-  const [page, setPage] = useState(1);
 
   // Main function to fetch tasks with current filters and page
   const fetchTasksWithFilters = async (pageNumber = 1) => {
     if (!user) return;
     dispatch({ type: "FETCH_START" });
     try {
-      const response = await getTasks(state.filters, pageNumber);
+      // Convert filters to match API expectations
+      const apiFilters = {
+        title: state.filters.title,
+        description: state.filters.description,
+        priority: state.filters.priority,
+        status: state.filters.status === 'completed' ? '1' : state.filters.status === 'incomplete' ? '0' : '',
+        due_date_from: state.filters.dueFrom,
+        due_date_to: state.filters.dueTo,
+      };
+      
+      const response = await getTasks(apiFilters, pageNumber);
       dispatch({ type: "FETCH_SUCCESS", payload: response });
-      setPage(pageNumber);
     } catch (err) {
       console.error(err);
       dispatch({ type: "FETCH_ERROR", payload: "Failed to load tasks." });
     }
   };
 
-  // Initial load and when filters change
+  // Initial load
   useEffect(() => {
     fetchTasksWithFilters(1);
-  }, []); // Remove state.filters from dependencies to avoid infinite loops
+  }, []);
 
   const handleDelete = async (task: Task) => {
     if (!window.confirm("Are you sure you want to delete this task?")) return;
     try {
       await deleteTask(task.id);
       // Refresh the current page after deletion
-      fetchTasksWithFilters(page);
+      fetchTasksWithFilters(state.tasks?.current_page || 1);
     } catch {
       dispatch({ type: "FETCH_ERROR", payload: "Failed to delete task." });
     }
@@ -48,7 +56,7 @@ const TaskList: React.FC = () => {
       const updatedTask = { ...task, is_completed: !task.is_completed };
       await updateTask(updatedTask);
       // Refresh the current page after update
-      fetchTasksWithFilters(page);
+      fetchTasksWithFilters(state.tasks?.current_page || 1);
     } catch {
       dispatch({ type: "FETCH_ERROR", payload: "Failed to update task status." });
     }
@@ -83,7 +91,7 @@ const TaskList: React.FC = () => {
 
   const { loading, error } = state;
   
-  // Use the tasks from the API response, fallback to empty array
+  // Use the tasks from the API response
   const tasks = state.tasks?.data || [];
   const pagination = state.tasks || {
     current_page: 1,
