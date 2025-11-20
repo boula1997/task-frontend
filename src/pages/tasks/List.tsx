@@ -179,7 +179,7 @@ const TaskList: React.FC = () => {
             <div className="col-auto">
               <button
                 className="btn btn-primary"
-                onClick={() => fetchTasksWithFilters()}
+                onClick={() => dispatch({ type: "APPLY_FILTERS" })}
               >
                 <i className="bi bi-funnel me-1"></i> Filter
               </button>
@@ -187,7 +187,7 @@ const TaskList: React.FC = () => {
             <div className="col-auto">
               <button
                 className="btn btn-secondary"
-                onClick={() => resetFilters()}
+                onClick={() => dispatch({ type: "RESET_FILTERS" })}
               >
                 <i className="bi bi-x-circle me-1"></i> Reset
               </button>
