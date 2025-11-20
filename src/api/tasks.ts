@@ -35,26 +35,26 @@ const getAuthHeader = () => {
 // ✅ Fetch all tasks
 export const getTasks = async (): Promise<Task[]> => {
   const res = await api.get("/tasks", getAuthHeader());
-  return res.data;
+  return res.data.data;
 };
 
 // ✅ Fetch one task by ID
 export const getTaskById = async (id: number): Promise<Task> => {
   const res = await api.get(`/tasks/${id}`, getAuthHeader());
-  return res.data;
+  return res.data.data;
 };
 
 // ✅ Create a new task
 export const createTask = async (task: Partial<Task>): Promise<Task> => {
   const res = await api.post("/tasks", task, getAuthHeader());
-  return res.data;
+  return res.data.data;
 };
 
 // ✅ Update an existing task
 export const updateTask = async (task: Partial<Task>): Promise<Task> => {
   if (!task.id) throw new Error("Task ID is required to update a task");
   const res = await api.post(`/tasks/${task.id}`, task, getAuthHeader());
-  return res.data;
+  return res.data.data;
 };
 
 // ✅ Delete a task
