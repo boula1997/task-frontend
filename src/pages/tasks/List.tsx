@@ -115,86 +115,108 @@ const TaskList: React.FC = () => {
           </div>
         </div>
 
-        <div className="row g-2 mb-3">
-          <div className="col-md-2">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Title"
-              value={state.filters.title}
-              onChange={(e) => dispatch({ type: "SET_FILTER", payload: { field: "title", value: e.target.value } })}
-            />
-          </div>
-          <div className="col-md-2">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Description"
-              value={state.filters.description}
-              onChange={(e) => dispatch({ type: "SET_FILTER", payload: { field: "description", value: e.target.value } })}
-            />
-          </div>
-          <div className="col-md-2">
-            <select
-              className="form-control"
-              value={state.filters.priority}
-              onChange={(e) => dispatch({ type: "SET_FILTER", payload: { field: "priority", value: e.target.value } })}
-            >
-              <option value="">All priorities</option>
-              <option value="high">High</option>
-              <option value="medium">Medium</option>
-              <option value="low">Low</option>
-            </select>
-          </div>
-          <div className="col-md-2">
-            <select
-              className="form-control"
-              value={state.filters.status}
-              onChange={(e) => dispatch({ type: "SET_FILTER", payload: { field: "status", value: e.target.value } })}
-            >
-              <option value="">All status</option>
-              <option value="completed">Completed</option>
-              <option value="incomplete">Incomplete</option>
-            </select>
-          </div>
-          <div className="col-md-2">
-            <input
-              type="date"
-              className="form-control"
-              value={state.filters.dueFrom}
-              onChange={(e) => dispatch({ type: "SET_FILTER", payload: { field: "dueFrom", value: e.target.value } })}
-            />
-          </div>
-          <div className="col-md-2">
-            <input
-              type="date"
-              className="form-control"
-              value={state.filters.dueTo}
-              onChange={(e) => dispatch({ type: "SET_FILTER", payload: { field: "dueTo", value: e.target.value } })}
-            />
-          </div>
+<div className="card-body bg-light rounded-4 mb-3 p-3 shadow-sm">
+  <h5 className="mb-3 fw-semibold text-primary">
+    <i className="bi bi-funnel me-2"></i>Filter Tasks
+  </h5>
+  <div className="row g-3 align-items-end">
+    <div className="col-md-2">
+      <label className="form-label fw-semibold">Title</label>
+      <input
+        type="text"
+        className="form-control"
+        placeholder="Title"
+        value={state.filters.title}
+        onChange={(e) =>
+          dispatch({ type: "SET_FILTER", payload: { field: "title", value: e.target.value } })
+        }
+      />
+    </div>
 
-          <div className="row g-2 mb-3 align-items-center">
-            {/* Your current filters */}
-            <div className="col-auto">
-              <button
-                className="btn btn-primary"
-                onClick={() => dispatch({ type: "APPLY_FILTERS" })}
-              >
-                <i className="bi bi-funnel me-1"></i> Filter
-              </button>
-            </div>
-            <div className="col-auto">
-              <button
-                className="btn btn-secondary"
-                onClick={() => dispatch({ type: "RESET_FILTERS" })}
-              >
-                <i className="bi bi-x-circle me-1"></i> Reset
-              </button>
-            </div>
-          </div>
+    <div className="col-md-2">
+      <label className="form-label fw-semibold">Description</label>
+      <input
+        type="text"
+        className="form-control"
+        placeholder="Description"
+        value={state.filters.description}
+        onChange={(e) =>
+          dispatch({ type: "SET_FILTER", payload: { field: "description", value: e.target.value } })
+        }
+      />
+    </div>
 
-        </div>
+    <div className="col-md-2">
+      <label className="form-label fw-semibold">Priority</label>
+      <select
+        className="form-select"
+        value={state.filters.priority}
+        onChange={(e) =>
+          dispatch({ type: "SET_FILTER", payload: { field: "priority", value: e.target.value } })
+        }
+      >
+        <option value="">All priorities</option>
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
+      </select>
+    </div>
+
+    <div className="col-md-2">
+      <label className="form-label fw-semibold">Status</label>
+      <select
+        className="form-select"
+        value={state.filters.status}
+        onChange={(e) =>
+          dispatch({ type: "SET_FILTER", payload: { field: "status", value: e.target.value } })
+        }
+      >
+        <option value="">All status</option>
+        <option value="completed">Completed</option>
+        <option value="incomplete">Incomplete</option>
+      </select>
+    </div>
+
+    <div className="col-md-2">
+      <label className="form-label fw-semibold">Due From</label>
+      <input
+        type="date"
+        className="form-control"
+        value={state.filters.dueFrom}
+        onChange={(e) =>
+          dispatch({ type: "SET_FILTER", payload: { field: "dueFrom", value: e.target.value } })
+        }
+      />
+    </div>
+
+    <div className="col-md-2">
+      <label className="form-label fw-semibold">Due To</label>
+      <input
+        type="date"
+        className="form-control"
+        value={state.filters.dueTo}
+        onChange={(e) =>
+          dispatch({ type: "SET_FILTER", payload: { field: "dueTo", value: e.target.value } })
+        }
+      />
+    </div>
+
+    <div className="col-md-12 d-flex justify-content-end mt-2">
+      <button
+        className="btn btn-primary me-2"
+        onClick={() => dispatch({ type: "APPLY_FILTERS" })}
+      >
+        <i className="bi bi-funnel me-1"></i> Filter
+      </button>
+      <button
+        className="btn btn-secondary"
+        onClick={() => dispatch({ type: "RESET_FILTERS" })}
+      >
+        <i className="bi bi-x-circle me-1"></i> Reset
+      </button>
+    </div>
+  </div>
+</div>
 
 
         <div className="card-body bg-light rounded-bottom-4 p-4">
