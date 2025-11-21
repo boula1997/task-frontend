@@ -86,7 +86,7 @@ const TaskList: React.FC = () => {
   const resetFilters = () => {
     dispatch({ type: "RESET_FILTERS" });
     // Wait for state update then refresh data
-    setTimeout(() => fetchTasksWithFilters(1), 0);
+    // setTimeout(() => fetchTasksWithFilters(1), 0);
   };
 
   const { loading, error } = state;
