@@ -104,7 +104,7 @@ const ShowTask: React.FC = () => {
         <div className="mt-4 text-end">
           <button
             className="btn btn-primary px-4"
-            onClick={() => navigate(`/tasks/edit/${task.id}`)}
+            onClick={() => navigate(`/tasks/${task.id}/edit`)}
           >
             <i className="bi bi-pencil-square me-1"></i> Edit Task
           </button>
