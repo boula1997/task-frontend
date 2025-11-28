@@ -113,7 +113,13 @@ const TaskList: React.FC = () => {
           <h4 className="mb-0 fw-semibold">
             <i className="bi bi-list-task me-2"></i>My Tasks
           </h4>
-          <div>
+          <div className="d-flex align-items-center">
+            {user && (
+              <span className="me-3 fw-semibold text-light">
+                <i className="bi bi-person-circle me-1"></i>
+                {user.email}
+              </span>
+            )}
             <button
               className="btn btn-light btn-sm fw-semibold me-2"
               onClick={() => navigate("/tasks/create")}
@@ -128,6 +134,7 @@ const TaskList: React.FC = () => {
             </button>
           </div>
         </div>
+
 
         <div className="card-body bg-light rounded-4 mb-3 p-3 shadow-sm">
           <h5 className="mb-3 fw-semibold text-primary">
