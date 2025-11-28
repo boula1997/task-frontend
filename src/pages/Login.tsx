@@ -73,31 +73,31 @@ const Login: React.FC = () => {
             </div>
           </div>
 
-<div className="mb-3">
-  <label className="form-label fw-semibold">Password</label>
-  <div className="input-group">
-    <span className="input-group-text bg-light">
-      <i className="bi bi-lock-fill text-primary"></i>
-    </span>
+          <div className="mb-3">
+            <label className="form-label fw-semibold">Password</label>
+            <div className="input-group">
+              <span className="input-group-text bg-light">
+                <i className="bi bi-lock-fill text-primary"></i>
+              </span>
 
-    <input
-      type={showPassword ? "text" : "password"}
-      className="form-control"
-      placeholder="Minimum 6 characters"
-      value={password}
-      onChange={(e) => setPassword(e.target.value)}
-      required
-    />
+              <input
+                type={showPassword ? "text" : "password"}
+                className="form-control"
+                placeholder="Minimum 6 characters"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
 
-    <span
-      className="input-group-text bg-light"
-      style={{ cursor: "pointer" }}
-      onClick={() => setShowPassword(!showPassword)}
-    >
-      <i className={showPassword ? "bi bi-eye-slash" : "bi bi-eye"}></i>
-    </span>
-  </div>
-</div>
+              <span
+                className="input-group-text bg-light"
+                style={{ cursor: "pointer" }}
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                <i className={showPassword ? "bi bi-eye-slash" : "bi bi-eye"}></i>
+              </span>
+            </div>
+          </div>
 
 
           <button

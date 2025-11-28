@@ -71,13 +71,12 @@ const ShowTask: React.FC = () => {
               <strong>⚡ Priority:</strong>
               <div>
                 <span
-                  className={`badge ${
-                    task.priority === "high"
+                  className={`badge ${task.priority === "high"
                       ? "bg-danger"
                       : task.priority === "medium"
-                      ? "bg-warning text-dark"
-                      : "bg-success"
-                  }`}
+                        ? "bg-warning text-dark"
+                        : "bg-success"
+                    }`}
                 >
                   {task.priority}
                 </span>
@@ -90,9 +89,8 @@ const ShowTask: React.FC = () => {
               <strong>✅ Status:</strong>
               <div>
                 <span
-                  className={`badge ${
-                    task.is_completed ? "bg-success" : "bg-secondary"
-                  }`}
+                  className={`badge ${task.is_completed ? "bg-success" : "bg-secondary"
+                    }`}
                 >
                   {task.is_completed ? "Completed" : "Incomplete"}
                 </span>

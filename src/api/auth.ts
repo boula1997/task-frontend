@@ -14,8 +14,7 @@ export const login = async (email: string, password: string) => {
 
 
 export const logout = async (token: string) => {
-  const res = await api.post(
-    "http://localhost:8000/api/auth/logout",
+  const res = await api.post( "/auth/logout",
     {},
     {
       headers: {
