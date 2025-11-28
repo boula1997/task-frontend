@@ -268,7 +268,7 @@ const TaskList: React.FC = () => {
           ) : (
             <div className="table-responsive">
               <table className="table table-hover align-middle bg-white shadow-sm rounded-3">
-                <thead className="table-primary text-center">
+                <thead className="table-primary">
                   <tr>
                     <th>Title</th>
                     <th>Description</th>
