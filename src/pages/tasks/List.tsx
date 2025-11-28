@@ -26,7 +26,7 @@ const TaskList: React.FC = () => {
         due_date_from: state.filters.dueFrom,
         due_date_to: state.filters.dueTo,
       };
-      
+
       const response = await getTasks(apiFilters, pageNumber);
       dispatch({ type: "FETCH_SUCCESS", payload: response });
     } catch (err) {
@@ -90,7 +90,7 @@ const TaskList: React.FC = () => {
   };
 
   const { loading, error } = state;
-  
+
   // Use the tasks from the API response
   const tasks = state.tasks?.data || [];
   const pagination = state.tasks || {
@@ -197,11 +197,19 @@ const TaskList: React.FC = () => {
                 type="date"
                 className="form-control"
                 value={state.filters.dueFrom}
-                onChange={(e) =>
-                  dispatch({ type: "SET_FILTER", payload: { field: "dueFrom", value: e.target.value } })
-                }
+                max={state.filters.dueTo || undefined} // can't pick after Due To
+                onChange={(e) => {
+                  const newDueFrom = e.target.value;
+                  // Ensure dueFrom <= dueTo
+                  if (state.filters.dueTo && newDueFrom > state.filters.dueTo) {
+                    dispatch({ type: "SET_FILTER", payload: { field: "dueFrom", value: state.filters.dueTo } });
+                  } else {
+                    dispatch({ type: "SET_FILTER", payload: { field: "dueFrom", value: newDueFrom } });
+                  }
+                }}
               />
             </div>
+
 
             <div className="col-md-2">
               <label className="form-label fw-semibold">Due To</label>
@@ -209,11 +217,19 @@ const TaskList: React.FC = () => {
                 type="date"
                 className="form-control"
                 value={state.filters.dueTo}
-                onChange={(e) =>
-                  dispatch({ type: "SET_FILTER", payload: { field: "dueTo", value: e.target.value } })
-                }
+                min={state.filters.dueFrom || undefined} // can't pick before Due From
+                onChange={(e) => {
+                  const newDueTo = e.target.value;
+                  // Ensure dueTo >= dueFrom
+                  if (state.filters.dueFrom && newDueTo < state.filters.dueFrom) {
+                    dispatch({ type: "SET_FILTER", payload: { field: "dueTo", value: state.filters.dueFrom } });
+                  } else {
+                    dispatch({ type: "SET_FILTER", payload: { field: "dueTo", value: newDueTo } });
+                  }
+                }}
               />
             </div>
+
 
             <div className="col-md-12 d-flex justify-content-center mt-2">
               <button
