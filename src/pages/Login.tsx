@@ -9,6 +9,7 @@ const Login: React.FC = () => {
   const [error, setError] = useState("");
   const { setUser, setToken } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,22 +73,32 @@ const Login: React.FC = () => {
             </div>
           </div>
 
-          <div className="mb-3">
-            <label className="form-label fw-semibold">Password</label>
-            <div className="input-group">
-              <span className="input-group-text bg-light">
-                <i className="bi bi-lock-fill text-primary"></i>
-              </span>
-              <input
-                type="password"
-                className="form-control"
-                placeholder="Minimum 6 characters"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-          </div>
+<div className="mb-3">
+  <label className="form-label fw-semibold">Password</label>
+  <div className="input-group">
+    <span className="input-group-text bg-light">
+      <i className="bi bi-lock-fill text-primary"></i>
+    </span>
+
+    <input
+      type={showPassword ? "text" : "password"}
+      className="form-control"
+      placeholder="Minimum 6 characters"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      required
+    />
+
+    <span
+      className="input-group-text bg-light"
+      style={{ cursor: "pointer" }}
+      onClick={() => setShowPassword(!showPassword)}
+    >
+      <i className={showPassword ? "bi bi-eye-slash" : "bi bi-eye"}></i>
+    </span>
+  </div>
+</div>
+
 
           <button
             type="submit"

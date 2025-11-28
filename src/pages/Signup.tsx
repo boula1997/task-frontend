@@ -6,6 +6,7 @@ const Signup: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // <- Add this
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -70,13 +71,20 @@ const Signup: React.FC = () => {
                 <i className="bi bi-lock-fill text-primary"></i>
               </span>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"} // <- toggle
                 className="form-control"
                 placeholder="Minimum 6 characters"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
+              <span
+                className="input-group-text bg-light"
+                style={{ cursor: "pointer" }}
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                <i className={showPassword ? "bi bi-eye-slash" : "bi bi-eye"}></i>
+              </span>
             </div>
           </div>
 
